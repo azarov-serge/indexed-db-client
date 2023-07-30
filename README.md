@@ -1,5 +1,26 @@
 # IndexedDbClient
 
+- [Types](#types)
+- [Create storage](#create-storage)
+- [Constants (config)](#constants-config)
+- [Configure + init v1](#configure--init-v1)
+- [Configure + init v2](#configure--init-v2)
+- [Add record](#add-record)
+- [Update record](#update-record)
+- [Select records](#select-records)
+  - [Select all records](#select-all-records)
+  - [Select all records (count)](#select-all-records-counts)
+  - [Select by id](#select-by-id)
+  - [Select by index (key)](#select-by-index-key)
+  - [Select by range)](#select-by-range)
+- [Delete record](#delete-record)
+  - [Delete by id](#delete-by-id)
+  - [Delete by index (key)](#delete-by-index-key)
+- [Delete DB](#delete-db)
+- [Storages (delete, create)](#storages-delete-create)
+  - [Delete storage](#delete-storage)
+  - [Create storage](#create-storage)
+
 ## Types
 
 Add types for DB and stores. File **example.types.ts**
