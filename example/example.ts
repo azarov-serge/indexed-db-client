@@ -56,7 +56,7 @@ export const startExample = async () => {
 
 	// Select all records
 	const allTasks = await indexedDbClient.from('tasks').select<Task>();
-	const allDeskTasks = await indexedDbClient
+	const allDescTasks = await indexedDbClient
 		.from('tasks')
 		.select<Task>({ orderBy: 'desc' });
 
