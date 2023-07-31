@@ -140,12 +140,28 @@ await indexedDbClient.from('tasks').update<Task>(updatedTask);
 const allTasks = await indexedDbClient.from('tasks').select<Task>();
 ```
 
+Select records and order by descending (desc). Default ordered by ascending (asc)
+
+```typescript
+const allDeskTasks = await indexedDbClient
+	.from('tasks')
+	.select<Task>({ orderBy: 'desk' });
+```
+
 ### Select all records (counts)
 
 ```typescript
 const fiveTasks = await indexedDbClient
 	.from('tasks')
 	.select<Task>({ count: 5 });
+```
+
+Select last 5 records.
+
+```typescript
+const allDeskTasks = await indexedDbClient
+	.from('tasks')
+	.select<Task>({ count: 5, orderBy: 'desk' });
 ```
 
 ### Select by id

@@ -56,10 +56,19 @@ export const startExample = async () => {
 
 	// Select all records
 	const allTasks = await indexedDbClient.from('tasks').select<Task>();
+	const allDeskTasks = await indexedDbClient
+		.from('tasks')
+		.select<Task>({ orderBy: 'desc' });
+
 	// Select all records (counts)
 	const fiveTasks = await indexedDbClient
 		.from('tasks')
 		.select<Task>({ count: 5 });
+
+	// Select last 5 records
+	const lastFiveTasks = await indexedDbClient
+		.from('tasks')
+		.select<Task>({ count: 5, orderBy: 'desc' });
 
 	// Select by id
 	const [foundedByIdTask] = await indexedDbClient

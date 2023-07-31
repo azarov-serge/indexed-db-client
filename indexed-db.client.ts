@@ -1,8 +1,4 @@
-import {
-	IndexedDbconfig,
-	SelectParams,
-	StorageIndex,
-} from './indexed-db.types';
+import { IndexedDbconfig, SelectParams } from './indexed-db.types';
 
 export class IndexedDbClient<IDBStorageName, IDBIndex> {
 	private db: IDBDatabase | null = null;
@@ -112,9 +108,45 @@ export class IndexedDbClient<IDBStorageName, IDBIndex> {
 			onError: this.clearStorageName,
 		};
 
-		const request = this.getSelectRequest(params, 'readonly');
+		const { key, value, count, orderBy } = params || {};
 
-		return this.promisifyRequest<T[]>(request, config);
+		const isStorage = !params || key === 'id' || (params && (count || orderBy));
+		const storage = isStorage
+			? this.getStorage('readonly')
+			: this.getStorage('readonly').index((key as string) || '');
+
+		if (orderBy !== 'desc') {
+			const request = storage.getAll(value, count);
+
+			return this.promisifyRequest<T[]>(request, config);
+		}
+
+		const values: T[] = [];
+		let step = 0;
+
+		const request = storage.openCursor(value, 'prev');
+
+		return new Promise((resolve, reject) => {
+			request.onsuccess = () => {
+				const isNeedStep = count && step ? step - count : true;
+				if (isNeedStep && request && request.result) {
+					const result = request.result;
+					values.push(result.value);
+					step++;
+					result.continue();
+				} else {
+					step = count ? count : step;
+					this.clearStorageName();
+
+					resolve(values);
+				}
+			};
+
+			request.onerror = (error) => {
+				this.clearStorageName();
+				reject(error);
+			};
+		});
 	};
 
 	public insert = async <T>(element: T): Promise<number> => {
@@ -219,31 +251,6 @@ export class IndexedDbClient<IDBStorageName, IDBIndex> {
 
 	private clearStorageName = (): void => {
 		this.storageName = null;
-	};
-
-	private getSelectRequest = (
-		params?: SelectParams<IDBIndex>,
-		mode?: IDBTransactionMode
-	): IDBRequest<any> => {
-		const storage = this.getStorage(mode);
-
-		if (!params) {
-			return this.getStorage(mode).getAll();
-		}
-
-		const { key, value, count } = params;
-
-		if (!key && !value && count) {
-			return this.getStorage(mode).getAll(undefined, count);
-		}
-
-		if (key === 'id') {
-			return storage.getAll(value, count);
-		}
-
-		const index = storage.index((key as string) || '');
-
-		return index.getAll(value, count);
 	};
 
 	private promisifyRequest = <T>(
