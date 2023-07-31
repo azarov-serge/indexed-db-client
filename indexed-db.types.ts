@@ -15,4 +15,5 @@ export interface SelectParams<I> {
 	key?: I | 'id';
 	value?: IDBKeyRange | any;
 	count?: number;
+	orderBy?: 'asc' | 'desc';
 }
