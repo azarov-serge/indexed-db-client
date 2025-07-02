@@ -1,48 +1,63 @@
 # IndexedDbClient
+A simple IndexedDB client for working with IndexedDB. Designed as ORM.
 
-- [Types](#types)
-- [Create storage](#create-storage)
-- [Constants (config)](#constants-config)
-- [Configure + init v1](#configure--init-v1)
-- [Configure + init v2](#configure--init-v2)
-- [Add record](#add-record)
-- [Update record](#update-record)
-- [Select records](#select-records)
-  - [Select all records](#select-all-records)
-  - [Select all records (count)](#select-all-records-counts)
-  - [Select by id](#select-by-id)
-  - [Select by index (key)](#select-by-index-key)
-  - [Select by range)](#select-by-range)
-- [Delete record](#delete-record)
-  - [Delete by id](#delete-by-id)
-  - [Delete by index (key)](#delete-by-index-key)
-- [Delete DB](#delete-db)
-- [Storages (delete, create)](#storages-delete-create)
-  - [Delete storage](#delete-storage)
-  - [Create storage](#create-storage)
+## Table of Contents
+- [IndexedDbClient](#indexeddbclient)
+	- [Table of Contents](#table-of-contents)
+	- [Create types for client](#create-types-for-client)
+	- [Create configuration (config)](#create-configuration-config)
+	- [Configure + initialization. Version#1](#configure--initialization-version1)
+	- [Configure + initialization. Version#2](#configure--initialization-version2)
+	- [Add a record to storage](#add-a-record-to-storage)
+	- [Update a record in storage](#update-a-record-in-storage)
+	- [Select records](#select-records)
+		- [Select all records](#select-all-records)
+		- [Select all records (counts)](#select-all-records-counts)
+		- [Select by id](#select-by-id)
+		- [Select by index (key)](#select-by-index-key)
+		- [Select by range](#select-by-range)
+		- [Select by range](#select-by-range-1)
+	- [Delete record](#delete-record)
+		- [Delete by id](#delete-by-id)
+		- [Delete by index (key)](#delete-by-index-key)
+	- [Delete DB](#delete-db)
+	- [Storages (delete, create)](#storages-delete-create)
+		- [Delete storage](#delete-storage)
+		- [Create storage](#create-storage)
 
-## Types
+## Create types for client
 
 Add types for DB and stores. File **example.types.ts**
 
 ```typescript
+/** you can use several storages 
+ * export type StorageName = 'categories' | 'tasks';
+*/
 export type StorageName = 'tasks';
+
+export type Id = number;
+
+export type Task = {
+  id: Id;
+  name: string;
+  isDone: boolean;
+  createdAt: Date;
+};
+
+/** Fields available for index search */
 export type TasksKey = 'createdAt' | 'name';
-export type StorageIndexName = `tasks${Capitalize<TasksKey>}`;
+/** Index name for search by index */
+export type StorageIndexName = `tasks${Capitalize<
+  Extract<keyof Task, 'name' | 'createdAt'>
+>}`;
 
-type Id = number;
-
-export interface Task {
-	id: Id;
-	name: string;
-	isDone: boolean;
-	createdAt: Date;
-}
 ```
 
-## Constants (config)
+[to table of contents](#indexeddbclient)
 
-Add config. File **example.constants.ts**
+## Create configuration (config)
+
+Create a configuration file (**/example/constants.ts**)
 
 ```typescript
 import { StorageIndex } from '../indexed-db.types';
@@ -53,7 +68,7 @@ export const DB_VERSION = 1;
 
 export const storageNames: StorageName[] = ['tasks'];
 
-export const storeNameToIndexeses: Record<
+export const storeNameToIndexes: Record<
 	StorageName,
 	StorageIndex<StorageIndexName>[]
 > = {
@@ -67,11 +82,12 @@ export const indexedDbConfig = {
 	dbName: DB_NAME,
 	dbVersion: DB_VERSION,
 	storageNames,
-	storeNameToIndexeses,
+	storeNameToIndexes,
 };
 ```
+[to table of contents](#indexeddbclient)
 
-## Configure + init v1
+## Configure + initialization. Version#1
 
 ```typescript
 export const indexedDbClient = new IndexedDbClient(indexedDbConfig);
@@ -86,7 +102,9 @@ const startExample = async () => {
 };
 ```
 
-## Configure + init v2
+[to table of contents](#indexeddbclient)
+
+## Configure + initialization. Version#2
 
 ```typescript
 export const indexedDbClient = new IndexedDbClient();
@@ -102,10 +120,14 @@ const startExample = async () => {
 };
 ```
 
-## Add record
+[to table of contents](#indexeddbclient)
+
+## Add a record to storage
 
 ```typescript
-const taskData = {
+type NewTask = Omit<Task, 'id'>;
+
+const taskData: NewTask = {
 	name: 'Task #1',
 	isDone: false,
 	createdAt: new Date(),
@@ -113,15 +135,18 @@ const taskData = {
 
 const id = await indexedDbClient
 	.from('tasks')
-	.insert<Omit<Task, 'id'>>(taskData);
+	.insert<NewTask>(taskData);
 
 const createdTask: Task = {
 	id,
 	...taskData,
 };
+
 ```
 
-## Update record
+[to table of contents](#indexeddbclient)
+
+## Update a record in storage
 
 ```typescript
 const updatedTask = {
@@ -132,6 +157,8 @@ const updatedTask = {
 await indexedDbClient.from('tasks').update<Task>(updatedTask);
 ```
 
+[to table of contents](#indexeddbclient)
+
 ## Select records
 
 ### Select all records
@@ -140,6 +167,8 @@ await indexedDbClient.from('tasks').update<Task>(updatedTask);
 const allTasks = await indexedDbClient.from('tasks').select<Task>();
 ```
 
+[to table of contents](#indexeddbclient)
+
 Select records and order by descending (desc). Default ordered by ascending (asc)
 
 ```typescript
@@ -147,6 +176,8 @@ const allDeskTasks = await indexedDbClient
 	.from('tasks')
 	.select<Task>({ orderBy: 'desk' });
 ```
+
+[to table of contents](#indexeddbclient)
 
 ### Select all records (counts)
 
@@ -164,6 +195,9 @@ const allDeskTasks = await indexedDbClient
 	.select<Task>({ count: 5, orderBy: 'desk' });
 ```
 
+[to table of contents](#indexeddbclient)
+
+
 ### Select by id
 
 ```typescript
@@ -171,6 +205,8 @@ const [foundedByIdTask] = await indexedDbClient
 	.from('tasks')
 	.select<Task>({ key: 'id', value: 1 });
 ```
+
+[to table of contents](#indexeddbclient)
 
 ### Select by index (key)
 
@@ -180,6 +216,8 @@ const [foundedByIndexTask] = await indexedDbClient
 	.select<Task>({ key: 'tasksName', value: 'Task #2' });
 ```
 
+[to table of contents](#indexeddbclient)
+
 ### Select by range
 
 ```typescript
@@ -188,6 +226,8 @@ const [foundedByRangeTask] = await indexedDbClient.from('tasks').select<Task>({
 	value: IDBKeyRange.lowerBound(new Date()),
 });
 ```
+
+[to table of contents](#indexeddbclient)
 
 ### Select by range
 
@@ -201,6 +241,8 @@ const foundedByRangeAndCountTasks = await indexedDbClient
 	});
 ```
 
+[to table of contents](#indexeddbclient)
+
 ## Delete record
 
 ### Delete by id
@@ -208,6 +250,8 @@ const foundedByRangeAndCountTasks = await indexedDbClient
 ```typescript
 await indexedDbClient.from('tasks').delete({ key: 'id', value: 1 });
 ```
+
+[to table of contents](#indexeddbclient)
 
 ### Delete by index (key)
 
@@ -217,11 +261,15 @@ await indexedDbClient
 	.delete({ key: 'tasksName', value: 'Updated task #1' });
 ```
 
+[to table of contents](#indexeddbclient)
+
 ## Delete DB
 
 ```typescript
 await indexedDbClient.deleteDb();
 ```
+
+[to table of contents](#indexeddbclient)
 
 ## Storages (delete, create)
 
@@ -231,8 +279,13 @@ await indexedDbClient.deleteDb();
 await indexedDbClient.deleteStorage('tasks');
 ```
 
+[to table of contents](#indexeddbclient)
+
+
 ### Create storage
 
 ```typescript
 await indexedDbClient.createStorage('tasks');
 ```
+
+[to table of contents](#indexeddbclient)
