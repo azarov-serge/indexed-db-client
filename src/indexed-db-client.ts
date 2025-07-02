@@ -48,10 +48,7 @@ export class IndexedDbClient<IDBStorageName, IDBIndex> {
           this.db = request.result;
 
           storageNames.forEach((storageName) => {
-            if (
-              this.db &&
-              !this.db.objectStoreNames.contains(storageName as string)
-            ) {
+            if (this.db && !this.db.objectStoreNames.contains(storageName as string)) {
               this.createStorage(storageName);
             }
           });
@@ -82,8 +79,7 @@ export class IndexedDbClient<IDBStorageName, IDBIndex> {
       autoIncrement: true,
     });
 
-    const indexes =
-      this.config?.storeNameToIndexes[storageName as string] || [];
+    const indexes = this.config?.storeNameToIndexes[storageName as string] || [];
 
     indexes.forEach(({ index, key, unique = false }) => {
       store.createIndex(index as string, key, {
@@ -147,9 +143,7 @@ export class IndexedDbClient<IDBStorageName, IDBIndex> {
   };
 
   public insert = async <T>(element: T): Promise<number> => {
-    const request = this.getStorage('readwrite').put(
-      element
-    ) as unknown as IDBRequest<number>;
+    const request = this.getStorage('readwrite').put(element) as unknown as IDBRequest<number>;
 
     return this.promisifyRequest<number>(request, {
       defaultValue: -1,
