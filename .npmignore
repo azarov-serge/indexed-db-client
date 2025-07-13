@@ -1,0 +1,41 @@
+# Source files
+src/
+example/
+
+# Development files
+tsconfig.json
+tsconfig.node.json
+babel.config.json
+.eslintrc*
+.prettierrc*
+.husky/
+
+# Build artifacts
+*.tsbuildinfo
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+node_modules/
+
+# Test files
+coverage/
+.nyc_output/
+
+# Temporary files
+*.tmp
+*.temp 
