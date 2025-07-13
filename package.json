@@ -15,7 +15,14 @@
     "build": "tsc",
     "prepare": "npm run build",
     "format": "npx prettier \"src/**/*.{js,jsx,ts,tsx}\" --write",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublishOnly": "npm run build",
+    "version:patch": "npm version patch && git push origin main && git push origin $(npm version --json | jq -r '.[]')",
+    "version:minor": "npm version minor && git push origin main && git push origin $(npm version --json | jq -r '.[]')",
+    "version:major": "npm version major && git push origin main && git push origin $(npm version --json | jq -r '.[]')",
+    "publish:patch": "npm run version:patch && npm publish",
+    "publish:minor": "npm run version:minor && npm publish",
+    "publish:major": "npm run version:major && npm publish"
   },
   "keywords": [
     "indexeddb",
