@@ -1,6 +1,6 @@
 {
   "name": "@azarov-serge/indexed-db-client",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple IndexedDB client for working with IndexedDB. Designed as ORM.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
