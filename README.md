@@ -2,6 +2,8 @@
 
 A simple and powerful IndexedDB client for working with IndexedDB in the browser. Designed as an ORM-like interface that makes IndexedDB operations intuitive and type-safe.
 
+> 🇷🇺 [Читать на русском языке](README_RU.md)
+
 ## Features
 
 - 🚀 **Simple API** - Intuitive ORM-like interface
@@ -482,3 +484,7 @@ MIT
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+---
+
+> 🇷🇺 [Читать на русском языке](README_RU.md)
