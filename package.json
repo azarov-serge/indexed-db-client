@@ -37,12 +37,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/indexed-db-client.git"
+    "url": "git+https://github.com/azarov-serge/indexed-db-client.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/indexed-db-client/issues"
+    "url": "https://github.com/azarov-serge/indexed-db-client/issues"
   },
-  "homepage": "https://github.com/yourusername/indexed-db-client#readme",
+  "homepage": "https://github.com/azarov-serge/indexed-db-client#readme",
   "devDependencies": {
     "@typescript-eslint/parser": "7.2.0",
     "eslint": "8.57.0",
