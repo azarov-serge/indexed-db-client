@@ -14,13 +14,13 @@
 ## Установка
 
 ```bash
-npm install indexed-db-client
+npm install @azarov-serge/indexed-db-client
 ```
 
 ## Быстрый старт
 
 ```typescript
-import { IndexedDbClient } from 'indexed-db-client';
+import { IndexedDbClient } from '@azarov-serge/indexed-db-client';
 
 // Определите ваши типы
 type Task = {
@@ -98,7 +98,7 @@ export type CategoryIndexName = 'categoriesName';
 
 ```typescript
 // config.ts
-import { IDBConfig } from 'indexed-db-client';
+import { IDBConfig } from '@azarov-serge/indexed-db-client';
 import { StorageName, TaskIndexName, CategoryIndexName } from './types';
 
 export const indexedDbConfig: IDBConfig<StorageName, TaskIndexName | CategoryIndexName> = {
@@ -263,7 +263,7 @@ if (client.isInited) {
 ### Базовые CRUD операции
 
 ```typescript
-import { IndexedDbClient } from 'indexed-db-client';
+import { IndexedDbClient } from '@azarov-serge/indexed-db-client';
 
 // Настройка
 const client = new IndexedDbClient(config);
